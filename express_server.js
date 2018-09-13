@@ -46,16 +46,21 @@ app.get('/mem', (req, res) => {
 
 app.get('/reset', (req, res) => {
   newGame();
+  ship = 'carrier';
   res.redirect('/');
 });
 
-app.post('/mem/:id', (req, res) => {
+app.post('/fire/:id', (req, res) => {
   console.log(req.params.id);
   const coord = getCoord(req.params.id);
   console.log(coord);
-  const y = coord[0];
-  const x = coord[1];
-  const code = fireMissle(mem.player2.board, coord);
+  let code = fireMissle(mem.player2.board, coord);
+  if (code === 'HIT') {
+    mem.player2.count -= 1;
+  }
+  if (mem.player2.count === 0) {
+    code = 'GAME';
+  }
   console.log('posted', coord, code);
   res.send(code);
 });

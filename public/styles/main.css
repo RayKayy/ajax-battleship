@@ -12,6 +12,12 @@
   background-color: lightblue;
 }
 
+#board-placeholder {
+  width: 30em;
+  height: 30em;
+  margin: auto;
+}
+
 .row {
   display: flex;
   align-items: center;
@@ -62,4 +68,8 @@
 
 #container section p {
   text-align: center;
+}
+
+.deployed {
+  background-color: lightgreen;
 }

@@ -14,6 +14,30 @@
 // mem.player2.refBoard = genBoard(10);
 // mem.player2.board = genBoard(10);
 
+// Helper function to show deployed ships;
+
+function startGame() {
+  $('#board-container').fadeIn();
+  $('#own-board .grid').off();
+}
+
+function startButton() {
+  $('#start').on('click', () => {
+    let message;
+    $.ajax('/mem',  {method: 'GET' })
+      .then((mem) => {
+        console.log(mem);
+        if (mem.player2.shipsPlaced.length === 5) {
+          startGame();
+          message = `<p>${new Date().toTimeString().slice(0, 8)} - Game START!</p>`;
+        } else {
+          message = `<p>${new Date().toTimeString().slice(0, 8)} - Please place all ships!</p>`;
+        }
+        $('#log').prepend(message);
+      });
+  });
+}
+
 function chooseShip() {
   $('#ship-type input').on('change', (e) => {
     const ship = $('input[name=ships]:checked', '#ship-type').attr('id');
@@ -48,19 +72,26 @@ function orientButton() {
 
 function placeShips() {
   $('#own-board .grid').click((e) => {
-    let coord = Number($(e.target).attr('id'));
-    console.log(coord);
+    let coord = $(e.target).attr('id');
     $.ajax(`/place/${coord}`, { method: 'POST' })
       .then((data) => {
         const message = `<p>${new Date().toTimeString().slice(0, 8)} - ${coord}, ${data[0][1]}!</p>`;
         if (data[0][0] === 1) {
+          // Display placed ship on player board by adding class.
           $(`#${coord}`).addClass('deployed');
-          console.log(data[1].player2.board);
-          for (let i = 0; i < data[2]; i += 1) {
+          coord = Number(coord);
+          for (let i = 1; i < data[2]; i += 1) {
             if (data[3]) {
               coord += 1;
+              if (coord < 10) {
+                coord = `0${coord}`;
+              }
+              $(`#${coord}`).addClass('deployed');
+            } else {
+              coord += 10;
               $(`#${coord}`).addClass('deployed');
             }
+            coord = Number(coord);
           }
         }
         $('#log').prepend(message);
@@ -68,21 +99,12 @@ function placeShips() {
   });
 }
 
-function placeButton() {
-  $('#place').on('click', (e) => {
-    $('#own-board .grid').off('click');
-    placeShips();
-    // $.ajax('/reset', { method: 'GET' });
-    // $('.grid').removeClass('hit miss tgt');
-    // $('.grid').empty();
-  });
-}
 
 function checkGrid() {
   $('#board-container .grid').click((e) => {
     const coord = $(e.target).attr('id');
     console.log(coord);
-    $.ajax(`/mem/${coord}`, { method: 'POST' })
+    $.ajax(`/fire/${coord}`, { method: 'POST' })
       .then((data) => {
         const message = `<p>${new Date().toTimeString().slice(0, 8)} - Fired at: ${coord}, ${data}!</p>`;
         console.log(data);
@@ -92,9 +114,10 @@ function checkGrid() {
         } else if (data === 'MISS') {
           $(e.target).addClass('miss');
           $(e.target).text('miss');
-        } else if (data === 'TGT') {
-          $(e.target).addClass('tgt');
-          $(e.target).text('tgt');
+        } else if (data === 'GAME') {
+          $(e.target).addClass('hit');
+          $(e.target).text('hit');
+          $('#board-container .grid').off();
         }
         $('#log').prepend(message);
       });
@@ -151,4 +174,6 @@ $(document).ready(() => {
   resetButton();
   orientButton();
   chooseShip();
+  startButton();
+  $('#board-container').fadeOut();
 });

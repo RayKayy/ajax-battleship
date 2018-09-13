@@ -2,9 +2,11 @@
 const D_STATE = {
   player1: {
     shipsPlaced: [],
+    count: 17,
   },
   player2: {
     shipsPlaced: [],
+    count: 17,
   },
 };
 // An object containing ships and its length.
