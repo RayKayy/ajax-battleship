@@ -38,6 +38,16 @@ const ID = ['ca', 'ba', 'cr', 'su', 'de'];
 // Creates a memory object from D_STATE
 // state
 
+// Helper function to generate random coordinates
+function randomCoord() {
+  let coord = Math.floor(Math.random() * 100);
+  if (coord < 10) {
+    coord = [0, coord];
+  } else {
+    coord = coord.toString().split('').map(x => Number(x));
+  }
+  return coord;
+}
 
 // Generate Board => Takes in a number Returns an array of arrays
 function genBoard(size) {
@@ -113,6 +123,7 @@ const placeShips = function place(ship, coords, orient, state, player = 'player1
 
 // A function to fire and check if it hits/miss/targeted.
 const fireMissle = function fire(board, coords) {
+  console.log(coords);
   const column = coords[1];
   const row = coords[0];
   const temp = board;
@@ -140,4 +151,5 @@ module.exports = {
   placeShips,
   fireMissle,
   ID,
+  randomCoord,
 };

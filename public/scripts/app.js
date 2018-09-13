@@ -27,7 +27,7 @@ function startButton() {
     $.ajax('/mem',  {method: 'GET' })
       .then((mem) => {
         console.log(mem);
-        if (mem.player2.shipsPlaced.length === 5) {
+        if (mem.player1.shipsPlaced.length === 5) {
           startGame();
           message = `<p>${new Date().toTimeString().slice(0, 8)} - Game START!</p>`;
         } else {
@@ -51,8 +51,10 @@ function chooseShip() {
 function resetButton() {
   $('#reset').on('click', (e) => {
     $.ajax('/reset', { method: 'GET' });
-    $('.grid').removeClass('hit miss tgt');
+    $('.grid').removeClass('hit miss tgt deployed');
     $('.grid').empty();
+    const message = `<p>${new Date().toTimeString().slice(0, 8)} - Game Reset!</p>`;
+    $('#log').prepend(message);
   });
 }
 
@@ -106,19 +108,31 @@ function checkGrid() {
     console.log(coord);
     $.ajax(`/fire/${coord}`, { method: 'POST' })
       .then((data) => {
-        const message = `<p>${new Date().toTimeString().slice(0, 8)} - Fired at: ${coord}, ${data}!</p>`;
+        let message = `<p>${new Date().toTimeString().slice(0, 8)} - P1 Fired at: ${coord}, ${data[0]}!</p>`;
         console.log(data);
-        if (data === 'HIT') {
+        if (data[0] === 'HIT') {
           $(e.target).addClass('hit');
           $(e.target).text('hit');
-        } else if (data === 'MISS') {
+        } else if (data[0] === 'MISS') {
           $(e.target).addClass('miss');
           $(e.target).text('miss');
-        } else if (data === 'GAME') {
+        } else if (data[0] === 'GAME') {
           $(e.target).addClass('hit');
           $(e.target).text('hit');
           $('#board-container .grid').off();
         }
+        $('#log').prepend(message);
+        if (data[1] === 'HIT') {
+          $(`#${data[2]}`).addClass('hit');
+          $(`#${data[2]}`).text('X');
+        } else if (data[1] === 'MISS') {
+          $(`#${data[2]}`).addClass('miss');
+          $(`#${data[2]}`).text('miss');
+        } else if (data[1] === 'GAME') {
+          $(`#${data[2]}`).addClass('hit');
+          $(`#${data[2]}`).text('X');
+        }
+        message = `<p>${new Date().toTimeString().slice(0, 8)} - P2 Fired at: ${data[2]}, ${data[1]}!</p>`
         $('#log').prepend(message);
       });
   });
