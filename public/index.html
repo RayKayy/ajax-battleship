@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <title>Battleship</title>
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="/vendor/normalize-4.1.1.css" type="text/css" />
+
+    <!-- App CSS -->
+    <link rel="stylesheet" href="/styles/main.css" type="text/css" />
+
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <!--App scripts-->
+    <script type="text/javascript" src="/scripts/app.js"></script>
+
+  </head>
+
+  <body>
+    <main id="container">
+    <div id="own-board" class="board"></div>
+    <section id="log"></section>
+    <div id="board-container" class="board"></div>
+    </main>
+    <button id="reset">RESET</button>
+    <button id="place">PLACE SHIPS</button>
+    <button id="orient">Horizontal</button>
+    <div>
+      <form id="ship-type">
+          <fieldset>
+            <input type="radio" id="carrier" name="ships" checked>
+            <label for="carrier">Carrier</label>
+            <input type="radio" id="battleship" name="ships">
+            <label for="battleship">Battleship</label>
+            <input type="radio" id="cruiser" name="ships">
+            <label for="cruiser">Cruiser</label>
+            <input type="radio" id="submarine" name="ships">
+            <label for="submarine">Submarine</label>
+            <input type="radio" id="destroyer" name="ships">
+            <label for="destroyer">Destroyer</label>
+          </fieldset>
+      </form>
+    </div>
+  </body>
+
+
+</html>
