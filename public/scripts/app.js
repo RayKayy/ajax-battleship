@@ -1,24 +1,18 @@
 // DOM Manupilation with jQuery.
 
-// const bs = require('../../bs-logic');
-
-// const { D_STATE } = bs;
-// const { SHIPS } = bs;
-// const { fireMissle } = bs;
-// const { genBoard } = bs;
-// const { placeShips } = bs;
-
-// const mem = JSON.parse(JSON.stringify(D_STATE));
-// mem.player1.refBoard = genBoard(10);
-// mem.player1.board = genBoard(10);
-// mem.player2.refBoard = genBoard(10);
-// mem.player2.board = genBoard(10);
+const $win = $('<div>').addClass('win');
+// $win.append('<button id="reset">RESET</button>');
+$win.text('YOU WON!');
+const $lost = $('<div>').addClass('lost');
+// $lost.append('<button id="reset">RESET</button>');
+$lost.text('YOU LOST!');
 
 // Helper function to show deployed ships;
 
 function startGame() {
   $('#board-container').fadeIn();
   $('#own-board .grid').off();
+  $('header').slideUp();
 }
 
 function startButton() {
@@ -62,6 +56,19 @@ function orientButton() {
   });
 }
 
+function diffButton() {
+  $('#difficult').on('click', (e) => {
+    $.ajax('/difficulty', { method: 'POST' })
+      .then((difficulty) => {
+        if (difficulty) {
+          $('#difficult').text('Hard');
+        } else {
+          $('#difficult').text('Easy');
+        }
+      });
+  });
+}
+
 
 function placeShips() {
   $('#own-board .grid').click((e) => {
@@ -92,6 +99,14 @@ function placeShips() {
   });
 }
 
+function endPage() {
+  $('.win, .lost').on('click', (e) => {
+    console.log(e);
+    $.ajax('/reset', { method: 'GET' });
+    window.location = '/';
+  });
+}
+
 
 function checkGrid() {
   $('#board-container .grid').click((e) => {
@@ -103,26 +118,33 @@ function checkGrid() {
         console.log(data);
         if (data[0] === 'HIT') {
           $(e.target).addClass('hit');
-          $(e.target).text('hit');
+          $(e.target).text('HIT');
         } else if (data[0] === 'MISS') {
           $(e.target).addClass('miss');
-          $(e.target).text('miss');
+          $(e.target).text('...');
         } else if (data[0] === 'GAME') {
           $(e.target).addClass('hit');
-          $(e.target).text('hit');
+          $(e.target).text('HIT');
+          $('#container').empty();
+          $('#container').append($win);
+          endPage();
           $('#board-container .grid').off();
         }
         $('#log').prepend(message);
         if (data[0] !== 'GAME') {
           if (data[1] === 'HIT') {
-            $(`#${data[2]}`).addClass('hit');
+            $(`#${data[2]}`).addClass('enemy-hit');
             $(`#${data[2]}`).text('X');
           } else if (data[1] === 'MISS') {
             $(`#${data[2]}`).addClass('miss');
             $(`#${data[2]}`).text('miss');
           } else if (data[1] === 'GAME') {
-            $(`#${data[2]}`).addClass('hit');
+            $(`#${data[2]}`).addClass('enemy-hit');
             $(`#${data[2]}`).text('X');
+            $('#container').empty();
+            $('#container').append($lost);
+            endPage();
+            $('#board-container .grid').off();
           }
           message = `<p>${new Date().toTimeString().slice(0, 8)} - P2 Fired at: ${data[2]}, ${data[1]}!</p>`
           $('#log').prepend(message);
@@ -183,9 +205,11 @@ function resetButton() {
     $('.grid').off();
     checkGrid();
     placeShips();
+    $('#orient').text('Horizontal');
     $('#carrier').prop('checked', true);
     const message = `<p>${new Date().toTimeString().slice(0, 8)} - Game Reset!</p>`;
     $('#log').prepend(message);
+    $('#board-container').fadeOut();
   });
 }
 
@@ -196,5 +220,6 @@ $(document).ready(() => {
   orientButton();
   chooseShip();
   startButton();
+  diffButton();
   $('#board-container').fadeOut();
 });

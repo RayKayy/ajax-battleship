@@ -17,6 +17,8 @@ let mem = JSON.parse(JSON.stringify(D_STATE));
 
 let status = true;
 let ship = 'carrier';
+let difficulty = false;
+let aiFired = [];
 
 function newGame() {
   mem = JSON.parse(JSON.stringify(D_STATE));
@@ -65,13 +67,13 @@ app.get('/reset', (req, res) => {
   newGame();
   aiPlace();
   ship = 'carrier';
+  status = true;
+  aiFired = [];
   res.redirect('/');
 });
 
 app.post('/fire/:id', (req, res) => {
-  // console.log(req.params.id);
   const coord = getCoord(req.params.id);
-  // console.log(coord);
   // Fires at targeted grid
   let code = fireMissle(mem.player2.board, coord);
   if (code === 'HIT') {
@@ -81,7 +83,15 @@ app.post('/fire/:id', (req, res) => {
     code = 'GAME';
   }
   // AI fires randomly
-  const aiCoord = randomCoord();
+  let aiCoord = randomCoord();
+
+  if (difficulty) {
+    while (aiFired.includes(aiCoord.join(''))) {
+      aiCoord = randomCoord();
+    }
+    aiFired.push(aiCoord.join(''));
+  }
+
   let aiCode = fireMissle(mem.player1.board, aiCoord);
   if (aiCode === 'HIT') {
     mem.player1.count -= 1;
@@ -89,15 +99,18 @@ app.post('/fire/:id', (req, res) => {
   if (mem.player1.count === 0) {
     aiCode = 'GAME';
   }
-  console.log(mem.player1.board);
-  console.log(mem.player2.board);
-
   res.send([code, aiCode, aiCoord.join('')]);
 });
 
 app.post('/status', (req, res) => {
   status = !status;
   res.send(status);
+});
+
+app.post('/difficulty', (req, res) => {
+  difficulty = !difficulty;
+  console.log(difficulty);
+  res.send(difficulty);
 });
 
 app.post('/ship', (req, res) => {

@@ -4,6 +4,41 @@
   margin: auto;
   background-color: lightblue;
 } */
+* {
+  font-family: 'Orbitron', sans-serif;
+}
+
+header {
+  height: 10vh;
+  font-weight: bold;
+  font-size: 5em;
+  text-align: center;
+  background: url(http://pngimg.com/uploads/sea/sea_PNG35.png);
+  background-size: 100%;
+
+}
+
+.win {
+  width:100%;
+  height: 100%;
+  background-color: lightgreen;
+  font-size: 10em;
+  opacity: .5;
+  line-height: 700px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.lost {
+  width:100%;
+  height: 100%;
+  background-color: lightcoral;
+  font-size: 10em;
+  opacity: .5;
+  line-height: 700px;
+  text-align: center;
+  font-weight: bold;
+}
 
 .board {
   width: 30em;
@@ -49,10 +84,19 @@
 #container {
   display: flex;
   justify-content: space-around;
-  height: 100vh;
+  height: 90vh;
   width: 100vw;
   background-color: aliceblue;
   align-items: center;
+}
+
+#console {
+  position: flex;
+  width: 20%;
+  height: 40%;
+  margin: 50px;
+  background-color: lightgrey;
+  padding: 2%;
 }
 
 #container section {
@@ -60,9 +104,8 @@
   align-content: flex-start;
   flex-direction: column;
   overflow: auto;
-  width: 20%;
+  width: 100%;
   height: 40%;
-  margin: 50px;
   background-color: lightgrey;
 }
 
@@ -72,4 +115,8 @@
 
 .deployed {
   background-color: lightgreen;
+}
+
+#own-board .enemy-hit {
+  background-color: lightslategray;
 }

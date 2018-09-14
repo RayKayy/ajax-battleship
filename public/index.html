@@ -3,6 +3,9 @@
   <head>
     <title>Battleship</title>
 
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css?family=Orbitron:400,700" rel="stylesheet">
+
     <!-- External CSS -->
     <link rel="stylesheet" href="/vendor/normalize-4.1.1.css" type="text/css" />
 
@@ -18,35 +21,50 @@
   </head>
 
   <body>
+    <header id="title">POOR MAN'S BATTLESHIP</header>
     <main id="container">
-    <div class="board-placeholder">
-      <div id="own-board" class="board"></div>
-    </div>
-    <section id="log"></section>
-    <div class="board-placeholder">
-      <div id="board-container" class="board"></div>
-    </div>
+      <div class="board-placeholder">
+        <div id="own-board" class="board"></div>
+      </div>
+      <div id="console">
+        <section id="log"></section>
+        <div id="selectors">
+          <button id="reset">RESET</button>
+          <button id="start">Start Game</button>
+          <button id="orient">Horizontal</button>
+          <button id="difficult">Easy</button>
+          <div>
+            <form id="ship-type">
+              <fieldset>
+                <div>
+                  <input type="radio" id="carrier" name="ships" checked>
+                  <label for="carrier">Carrier</label>
+                </div>
+                <div>
+                  <input type="radio" id="battleship" name="ships">
+                  <label for="battleship">Battleship</label>
+                </div>
+                <div>
+                  <input type="radio" id="cruiser" name="ships">
+                  <label for="cruiser">Cruiser</label>
+                </div>
+                <div>
+                 <input type="radio" id="submarine" name="ships">
+                  <label for="submarine">Submarine</label>
+                </div>
+                <div>
+                  <input type="radio" id="destroyer" name="ships">
+                  <label for="destroyer">Destroyer</label>
+                </div>
+              </fieldset>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="board-placeholder">
+        <div id="board-container" class="board"></div>
+      </div>
     </main>
-    <button id="reset">RESET</button>
-    <button id="place">PLACE SHIPS</button>
-    <button id="orient">Horizontal</button>
-    <button id="start">Start Game</button>
-    <div>
-      <form id="ship-type">
-          <fieldset>
-            <input type="radio" id="carrier" name="ships" checked>
-            <label for="carrier">Carrier</label>
-            <input type="radio" id="battleship" name="ships">
-            <label for="battleship">Battleship</label>
-            <input type="radio" id="cruiser" name="ships">
-            <label for="cruiser">Cruiser</label>
-            <input type="radio" id="submarine" name="ships">
-            <label for="submarine">Submarine</label>
-            <input type="radio" id="destroyer" name="ships">
-            <label for="destroyer">Destroyer</label>
-          </fieldset>
-      </form>
-    </div>
   </body>
 
 
