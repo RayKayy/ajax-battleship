@@ -12,7 +12,7 @@
   background-color: lightblue;
 }
 
-#board-placeholder {
+.board-placeholder {
   width: 30em;
   height: 30em;
   margin: auto;

@@ -20,9 +20,9 @@ let ship = 'carrier';
 
 function newGame() {
   mem = JSON.parse(JSON.stringify(D_STATE));
-  mem.player1.refBoard = genBoard(10);
+  // mem.player1.refBoard = genBoard(10);
   mem.player1.board = genBoard(10);
-  mem.player2.refBoard = genBoard(10);
+  // mem.player2.refBoard = genBoard(10);
   mem.player2.board = genBoard(10);
   console.log(mem.player1.shipsPlaced);
 }
@@ -55,6 +55,7 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 app.use(express.static('public'));
+app.disable('etag');
 
 app.get('/mem', (req, res) => {
   res.json(mem);
@@ -78,7 +79,6 @@ app.post('/fire/:id', (req, res) => {
   }
   if (mem.player2.count === 0) {
     code = 'GAME';
-    return;
   }
   // AI fires randomly
   const aiCoord = randomCoord();
@@ -89,8 +89,8 @@ app.post('/fire/:id', (req, res) => {
   if (mem.player1.count === 0) {
     aiCode = 'GAME';
   }
-  console.log(mem.player1.board, mem.player2.board);
-  // console.log(aiCoord.join(''));
+  console.log(mem.player1.board);
+  console.log(mem.player2.board);
 
   res.send([code, aiCode, aiCoord.join('')]);
 });
@@ -109,7 +109,7 @@ app.post('/place/:id', (req, res) => {
   const coord = getCoord(req.params.id);
   const result = placeShips(ship, coord, status, mem, 'player1');
   res.send([result, mem, SHIPS[ship].size, status]);
-  console.log(mem.player1.board);
+  console.log('mem is', mem.player1.board);
 });
 
 app.listen(PORT, () => {

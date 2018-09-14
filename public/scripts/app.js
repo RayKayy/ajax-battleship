@@ -48,15 +48,6 @@ function chooseShip() {
   });
 }
 
-function resetButton() {
-  $('#reset').on('click', (e) => {
-    $.ajax('/reset', { method: 'GET' });
-    $('.grid').removeClass('hit miss tgt deployed');
-    $('.grid').empty();
-    const message = `<p>${new Date().toTimeString().slice(0, 8)} - Game Reset!</p>`;
-    $('#log').prepend(message);
-  });
-}
 
 function orientButton() {
   $('#orient').on('click', (e) => {
@@ -122,18 +113,20 @@ function checkGrid() {
           $('#board-container .grid').off();
         }
         $('#log').prepend(message);
-        if (data[1] === 'HIT') {
-          $(`#${data[2]}`).addClass('hit');
-          $(`#${data[2]}`).text('X');
-        } else if (data[1] === 'MISS') {
-          $(`#${data[2]}`).addClass('miss');
-          $(`#${data[2]}`).text('miss');
-        } else if (data[1] === 'GAME') {
-          $(`#${data[2]}`).addClass('hit');
-          $(`#${data[2]}`).text('X');
+        if (data[0] !== 'GAME') {
+          if (data[1] === 'HIT') {
+            $(`#${data[2]}`).addClass('hit');
+            $(`#${data[2]}`).text('X');
+          } else if (data[1] === 'MISS') {
+            $(`#${data[2]}`).addClass('miss');
+            $(`#${data[2]}`).text('miss');
+          } else if (data[1] === 'GAME') {
+            $(`#${data[2]}`).addClass('hit');
+            $(`#${data[2]}`).text('X');
+          }
+          message = `<p>${new Date().toTimeString().slice(0, 8)} - P2 Fired at: ${data[2]}, ${data[1]}!</p>`
+          $('#log').prepend(message);
         }
-        message = `<p>${new Date().toTimeString().slice(0, 8)} - P2 Fired at: ${data[2]}, ${data[1]}!</p>`
-        $('#log').prepend(message);
       });
   });
 }
@@ -141,7 +134,7 @@ function checkGrid() {
 function generateGrid() {
   $.ajax('/mem', { method: 'GET' })
     .then((obj) => {
-      const board = obj.player1.refBoard;
+      const { board } = obj.player1;
       let i = 0;
       board.forEach((row) => {
         const $row = $('<div>').addClass('row');
@@ -163,7 +156,7 @@ function generateGrid() {
 function generatePlaceGrid() {
   $.ajax('/mem', { method: 'GET' })
     .then((obj) => {
-      const board = obj.player1.refBoard;
+      const { board } = obj.player1;
       let i = 0;
       board.forEach((row) => {
         const $row = $('<div>').addClass('row');
@@ -180,6 +173,20 @@ function generatePlaceGrid() {
       });
       placeShips();
     });
+}
+
+function resetButton() {
+  $('#reset').on('click', (e) => {
+    $.ajax('/reset', { method: 'GET' });
+    $('.grid').removeClass('hit miss tgt deployed');
+    $('.grid').empty();
+    $('.grid').off();
+    checkGrid();
+    placeShips();
+    $('#carrier').prop('checked', true);
+    const message = `<p>${new Date().toTimeString().slice(0, 8)} - Game Reset!</p>`;
+    $('#log').prepend(message);
+  });
 }
 
 $(document).ready(() => {

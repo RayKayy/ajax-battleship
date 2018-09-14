@@ -65,12 +65,13 @@ function genBoard(size) {
 
 // Place ships according to coords(array), and checks for invalid placements.
 // Updates board if valid, else logs reason and return to previous board state.
-const placeShips = function place(ship, coords, orient, state, player = 'player1') {
+const placeShips = function place(ship, coords, orient, state, player) {
   const length = SHIPS[ship].size;
   const column = coords[0];
   const row = coords[1];
   let { board } = state[player];
-  const tmp = Array.from(board);
+  const tmp = JSON.parse(JSON.stringify(board));
+
 
   if (state[player].shipsPlaced.includes(ship)) {
     console.log('Ship type already placed.');
@@ -87,7 +88,7 @@ const placeShips = function place(ship, coords, orient, state, player = 'player1
     for (let i = 0; i < length; i += 1) {
       // Check if tile occupied, if so revert back to previous board state.
       if (board[coords[0]][coords[1] + i] !== 0) {
-        board = tmp;
+        state[player].board = tmp;
         console.log('Another ship is in the way');
         return [0, 'Another ship is in the way'];
       }
@@ -109,7 +110,7 @@ const placeShips = function place(ship, coords, orient, state, player = 'player1
       // Check if tile occupied, if so revert back to previous board state.
       if (board[coords[0] + i][coords[1]] !== 0) {
         console.log('Another ship is in the way');
-        board = tmp;
+        state[player].board = tmp;
         return [0, 'Another ship is in the way'];
       }
       board[coords[0] + i][coords[1]] = SHIPS[ship].id;
