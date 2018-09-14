@@ -213,6 +213,15 @@ function resetButton() {
   });
 }
 
+function updatePlayer() {
+  $('#playername').on('submit', (e) => {
+    e.preventDefault();
+    const data = { name: $(e.target).children('textarea').val() };
+    $.ajax('/playername', { method: 'POST', data });
+    console.log(data);
+  });
+}
+
 $(document).ready(() => {
   generateGrid();
   generatePlaceGrid();
@@ -221,5 +230,6 @@ $(document).ready(() => {
   chooseShip();
   startButton();
   diffButton();
+  updatePlayer();
   $('#board-container').fadeOut();
 });

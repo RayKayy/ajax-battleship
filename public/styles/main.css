@@ -93,7 +93,7 @@ header {
 #console {
   position: flex;
   width: 20%;
-  height: 40%;
+  height: 65%;
   margin: 50px;
   background-color: lightgrey;
   padding: 2%;
@@ -105,7 +105,8 @@ header {
   flex-direction: column;
   overflow: auto;
   width: 100%;
-  height: 40%;
+  height: 50%;
+  margin-bottom: 5%;
   background-color: lightgrey;
 }
 

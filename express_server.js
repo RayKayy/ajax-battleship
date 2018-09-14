@@ -15,10 +15,15 @@ const { randomCoord } = bs;
 
 let mem = JSON.parse(JSON.stringify(D_STATE));
 
+const LEADERBOARD = {};
+
 let status = true;
 let ship = 'carrier';
 let difficulty = false;
 let aiFired = [];
+let moves = 0;
+let username = 'player1';
+
 
 function newGame() {
   mem = JSON.parse(JSON.stringify(D_STATE));
@@ -26,6 +31,7 @@ function newGame() {
   mem.player1.board = genBoard(10);
   // mem.player2.refBoard = genBoard(10);
   mem.player2.board = genBoard(10);
+  moves = 0;
   console.log(mem.player1.shipsPlaced);
 }
 
@@ -72,6 +78,10 @@ app.get('/reset', (req, res) => {
   res.redirect('/');
 });
 
+app.get('/leader', (req, res) => {
+  res.json(LEADERBOARD);
+});
+
 app.post('/fire/:id', (req, res) => {
   const coord = getCoord(req.params.id);
   // Fires at targeted grid
@@ -81,6 +91,7 @@ app.post('/fire/:id', (req, res) => {
   }
   if (mem.player2.count === 0) {
     code = 'GAME';
+    LEADERBOARD[username] = moves;
   }
   // AI fires randomly
   let aiCoord = randomCoord();
@@ -98,7 +109,9 @@ app.post('/fire/:id', (req, res) => {
   }
   if (mem.player1.count === 0) {
     aiCode = 'GAME';
+    moves = 0;
   }
+  moves += 1;
   res.send([code, aiCode, aiCoord.join('')]);
 });
 
@@ -123,6 +136,11 @@ app.post('/place/:id', (req, res) => {
   const result = placeShips(ship, coord, status, mem, 'player1');
   res.send([result, mem, SHIPS[ship].size, status]);
   console.log('mem is', mem.player1.board);
+});
+
+app.post('/playername', (req, res) => {
+  username = req.body.name;
+  console.log(username);
 });
 
 app.listen(PORT, () => {
