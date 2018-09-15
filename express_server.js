@@ -1,7 +1,9 @@
 
 // Require and create express server.
+const MONGODB_URI = 'mongodb://localhost:27017/battleship';
 const PORT = 8080;
 const express = require('express');
+const { MongoClient } = require('mongodb');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const bs = require('./bs-logic');
@@ -15,21 +17,17 @@ const { randomCoord } = bs;
 
 let mem = JSON.parse(JSON.stringify(D_STATE));
 
-const LEADERBOARD = {};
-
 let status = true;
 let ship = 'carrier';
 let difficulty = false;
 let aiFired = [];
 let moves = 0;
 let username = 'player1';
-
+let DB;
 
 function newGame() {
   mem = JSON.parse(JSON.stringify(D_STATE));
-  // mem.player1.refBoard = genBoard(10);
   mem.player1.board = genBoard(10);
-  // mem.player2.refBoard = genBoard(10);
   mem.player2.board = genBoard(10);
   moves = 0;
   console.log(mem.player1.shipsPlaced);
@@ -58,12 +56,18 @@ function getCoord(id) {
   return coord.map(x => Number(x));
 }
 
+// Connect to database.
+MongoClient.connect(MONGODB_URI)
+  .then((db) => {
+    DB = db;
+    console.log(DB);
+  });
+
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 app.use(express.static('public'));
-app.disable('etag');
 
 app.get('/mem', (req, res) => {
   res.json(mem);
@@ -79,7 +83,8 @@ app.get('/reset', (req, res) => {
 });
 
 app.get('/leader', (req, res) => {
-  res.json(LEADERBOARD);
+  DB.collection('leader').find().toArray()
+    .then(x => res.status(200).json(x));
 });
 
 app.post('/fire/:id', (req, res) => {
@@ -91,7 +96,11 @@ app.post('/fire/:id', (req, res) => {
   }
   if (mem.player2.count === 0) {
     code = 'GAME';
-    LEADERBOARD[username] = moves;
+    const leader = {
+      name: username,
+      score: moves,
+    };
+    DB.collection('leader').insertOne(leader);
   }
   // AI fires randomly
   let aiCoord = randomCoord();
@@ -140,7 +149,7 @@ app.post('/place/:id', (req, res) => {
 
 app.post('/playername', (req, res) => {
   username = req.body.name;
-  console.log(username);
+  console.log();
 });
 
 app.listen(PORT, () => {

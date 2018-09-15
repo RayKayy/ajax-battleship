@@ -121,3 +121,18 @@ header {
 #own-board .enemy-hit {
   background-color: lightslategray;
 }
+
+textarea {
+  resize: none;
+}
+
+.start form {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  height: 90vh;
+  width: 100%;
+  font-size: 3em;
+  background-color: lightgoldenrodyellow;
+}

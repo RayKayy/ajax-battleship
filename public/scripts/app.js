@@ -1,11 +1,19 @@
 // DOM Manupilation with jQuery.
 
+// Win/Loss screen
 const $win = $('<div>').addClass('win');
-// $win.append('<button id="reset">RESET</button>');
 $win.text('YOU WON!');
 const $lost = $('<div>').addClass('lost');
-// $lost.append('<button id="reset">RESET</button>');
 $lost.text('YOU LOST!');
+
+// Startscreen
+const $start = $('<div>').addClass('start');
+$start.html(`
+  <form id="playername" action="/playername" method="POST">
+    <span>ENTER YOUR NAME:</span>
+    <textarea cols="10" rows="1" placeholder="player1"></textarea>
+    <input type="submit" value="START">
+  </form>`);
 
 // Helper function to show deployed ships;
 
@@ -216,20 +224,24 @@ function resetButton() {
 function updatePlayer() {
   $('#playername').on('submit', (e) => {
     e.preventDefault();
+    $('.start').hide();
+    $('#container').fadeIn();
     const data = { name: $(e.target).children('textarea').val() };
     $.ajax('/playername', { method: 'POST', data });
     console.log(data);
+    generateGrid();
+    generatePlaceGrid();
+    resetButton();
+    orientButton();
+    chooseShip();
+    startButton();
+    diffButton();
+    $('#board-container').fadeOut();
   });
 }
 
 $(document).ready(() => {
-  generateGrid();
-  generatePlaceGrid();
-  resetButton();
-  orientButton();
-  chooseShip();
-  startButton();
-  diffButton();
+  $('#container').hide();
+  $('body').append($start);
   updatePlayer();
-  $('#board-container').fadeOut();
 });
