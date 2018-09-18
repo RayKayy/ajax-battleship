@@ -6,6 +6,7 @@ const express = require('express');
 const { MongoClient } = require('mongodb');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+const cookieSession = require('cookie-session');
 const bs = require('./bs-logic');
 
 const { D_STATE } = bs;
@@ -24,6 +25,17 @@ let aiFired = [];
 let moves = 0;
 let username = 'player1';
 let DB;
+
+function generateRandomString(length) {
+  const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let result = '';
+  for (let i = 0; i < length; i += 1) {
+    const random = Math.floor(Math.random() * chars.length);
+    const char = chars[random];
+    result += char;
+  }
+  return result;
+}
 
 function newGame() {
   mem = JSON.parse(JSON.stringify(D_STATE));
@@ -60,14 +72,27 @@ function getCoord(id) {
 MongoClient.connect(MONGODB_URI)
   .then((db) => {
     DB = db;
-    console.log(DB);
+    // console.log(DB);
   });
 
 const app = express();
+app.set('view engine', 'ejs');
 
+// Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan('dev'));
-app.use(express.static('public'));
+app.use(express.static(`${__dirname}/public`));
+app.use(cookieSession({
+  name: 'session',
+  keys: ['this is my key'],
+}));
+
+// GET routes
+app.get('/', (req, res) => {
+  req.session.id = generateRandomString(5);
+  console.log(req.session.id);
+  res.status(200).send();
+});
 
 app.get('/mem', (req, res) => {
   res.json(mem);
@@ -83,8 +108,12 @@ app.get('/reset', (req, res) => {
 });
 
 app.get('/leader', (req, res) => {
-  DB.collection('leader').find().toArray()
-    .then(x => res.status(200).json(x));
+  DB.collection('leader').find().sort({ score: 1 }).toArray()
+    .then((arr) => {
+      const data = { arr };
+      res.render('leader', data);
+    });
+    // .then(x => res.status(200).json(x));
 });
 
 app.post('/fire/:id', (req, res) => {
@@ -99,6 +128,7 @@ app.post('/fire/:id', (req, res) => {
     const leader = {
       name: username,
       score: moves,
+      time: new Date(),
     };
     DB.collection('leader').insertOne(leader);
   }

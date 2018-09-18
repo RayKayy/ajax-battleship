@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <title>Battleship - Leaderboard</title>
+  </head>
+  <body>
+    <main id="leaderboard">
+      <table>
+        <tr>
+          <th>NAME</th>
+          <th>NO. OF MOVES</th>
+          <th>DATE</th>
+        </tr>
+        <% for (let user of arr) { %>
+          <tr>
+            <td><%=user.name%></td>
+            <td><%=user.score%></td>
+            <td><%=user.time.toDateString()%></td>
+          </tr>
+          <% } %>
+      </table>
+
+    </main>
+  </body>
+</html>
