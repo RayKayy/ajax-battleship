@@ -3,6 +3,12 @@ const D_STATE = {
   player1: {
     shipsPlaced: [],
     count: 17,
+    status: true,
+    ship: 'carrier',
+    difficulty: false,
+    aiFired: [],
+    moves: 0,
+    username: 'player1',
   },
   player2: {
     shipsPlaced: [],
