@@ -1,4 +1,4 @@
-#ajax-battleship
+# ajax-battleship
 
 A basic battleship game implemented using a full stack approach
 This project uses AJAX to implement a single page app experience.
