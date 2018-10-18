@@ -243,5 +243,5 @@ function updatePlayer() {
 $(document).ready(() => {
   $('#container').hide();
   $('body').append($start);
-  updatePlayer();
+  $('#board-container').fadeOut();
 });
